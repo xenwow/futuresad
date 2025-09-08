@@ -5,21 +5,37 @@ class ASCIIConverter {
         this.contrast = 1.5;
         this.output = document.getElementById('ascii-output');
         this.setupListeners();
+        
+        // Hide range input since we'll use scroll wheel
+        document.getElementById('contrast').style.display = 'none';
     }
 
     setupListeners() {
         document.getElementById('capture').addEventListener('click', () => this.capture());
         document.getElementById('toggle').addEventListener('click', () => this.toggleColor());
-        document.getElementById('contrast').addEventListener('input', (e) => {
-            this.contrast = parseFloat(e.target.value);
+        
+        // Use R1 hardware controls
+        window.addEventListener('scrollUp', () => {
+            this.contrast = Math.min(3, this.contrast + 0.1);
             this.processLastImage();
         });
+        
+        window.addEventListener('scrollDown', () => {
+            this.contrast = Math.max(1, this.contrast - 0.1);
+            this.processLastImage();
+        });
+        
+        window.addEventListener('sideClick', () => this.capture());
     }
 
     capture() {
-        PluginMessageHandler.postMessage(JSON.stringify({
-            action: 'take_photo'
-        }));
+        // Use Creation SDK camera API
+        window.creationCamera.takePhoto().then(photoData => {
+            window.creationStorage.plain.setItem('lastImage', photoData);
+            this.convertToASCII(photoData);
+        }).catch(err => {
+            console.error('Camera error:', err);
+        });
     }
 
     toggleColor() {
@@ -80,12 +96,5 @@ class ASCIIConverter {
     }
 }
 
+// Initialize app
 const app = new ASCIIConverter();
-
-window.onPluginMessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'photo') {
-        window.creationStorage.plain.setItem('lastImage', data.content);
-        app.convertToASCII(data.content);
-    }
-};
