@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 240px;
+    height: 282px;
+    background: #000;
+    color: #fff;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    padding: 4px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#ascii-output {
+    flex: 1;
+    font-size: 4px;
+    line-height: 4px;
+    white-space: pre;
+    overflow: hidden;
+    border: 1px solid #333;
+    padding: 2px;
+    margin-bottom: 4px;
+}
+
+.controls {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+button {
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 4px 8px;
+    flex: 1;
+}
+
+button:active {
+    background: #FF4D00;  /* RAL2005 Luminous Orange */
+    color: #000;
+}
+
+input[type="range"] {
+    width: 60px;
+    accent-color: #FF4D00;  /* RAL2005 Luminous Orange */
+}
