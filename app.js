@@ -228,7 +228,7 @@ class DystopianFortune {
 
     generateNewFortune() {
         PluginMessageHandler.postMessage(JSON.stringify({
-            message: "No. Okay. You misunderstood. Literally give me 3 to 5 words only Just say 3 to 5 words. The response should just be 3 to 5 words. No anything else. Just a weird, dystopian fortune cookie message. In a war ridden world. ai overun world. make it eerily somewhat applicable to todays society",
+            message: "You are a weary survivor in the world of Forever Winter — a post-apocalyptic landscape of endless blizzards, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though carved into frost or spoken around a dying campfire. Each fortune should feel bleak, poetic, and survival-focused, tinged with cold inevitability. Use short, haunting sentences, no more than 3-5 words. Blend themes of survival, frost, memory, loss, and the unseen machinery of war. Avoid hopefulness; wisdom here is hard, bitter, and shaped by the eternal winter. DO NOT MENTION ANYTHING OTHER THAN THE QUOTE, DO NOT ADD QUOTES, NO NOT MENTION ANYTHING ELSE. JUST SAY THE WISDOM BY ITSELF",
             useLLM: true,
             wantsR1Response: false
         }));
