@@ -29,7 +29,7 @@ window.onPluginMessage = function(data) {
     }
 };
 
-// Proper accelerometer setup
+// Accelerometer setup
 async function requestAccelerometer() {
     try {
         const available = await window.creationSensors.accelerometer.isAvailable();
@@ -58,9 +58,13 @@ class DystopianFortune {
         this.isRendering = false;
         this.lastShake = 0;
 
-        this.checkDailyFortune();
+        // Show startup text immediately
+        this.startTextRendering();
+
         this.initializeDithering();
-        setTimeout(() => this.startTextRendering(), 1000);
+
+        // Generate new fortune immediately
+        this.generateNewFortune();
     }
 
     initializeDithering() {
@@ -168,25 +172,6 @@ class DystopianFortune {
         this.ctx.putImageData(img,0,0);
     }
 
-    async checkDailyFortune() {
-        const today = new Date().toDateString();
-        try {
-            const stored = await window.creationStorage.plain.getItem('fortune_data');
-            const data = stored ? JSON.parse(atob(stored)) : {};
-            if (data.date !== today) {
-                this.setFortune('syncing with transistor chips...'); // show immediately
-                this.generateNewFortune(); // async LLM call
-            } else {
-                this.currentFortune = data.fortune;
-                this.startTextRendering();
-            }
-        } catch (e) {
-            console.error('Storage error:', e);
-            this.setFortune('syncing with transistor chips...');
-            this.generateNewFortune();
-        }
-    }
-
     generateNewFortune() {
         if (typeof PluginMessageHandler !== 'undefined') {
             const payload = {
@@ -210,37 +195,21 @@ class DystopianFortune {
                 try {
                     const parsed = JSON.parse(data.data);
                     if (parsed.fortune) {
-                        const f = parsed.fortune.trim().toUpperCase();
-                        this.saveFortune(f); this.setFortune(f);
+                        this.setFortune(parsed.fortune.trim().toUpperCase());
                         return;
                     }
                 } catch (e) {
-                    const f = data.data.trim().toUpperCase();
-                    this.saveFortune(f); this.setFortune(f);
+                    this.setFortune(data.data.trim().toUpperCase());
                     return;
                 }
             } else if (data.data.fortune) {
-                const f = data.data.fortune.trim().toUpperCase();
-                this.saveFortune(f); this.setFortune(f);
+                this.setFortune(data.data.fortune.trim().toUpperCase());
                 return;
             }
         }
 
         if (data.message) {
-            const f = data.message.trim().toUpperCase();
-            this.saveFortune(f); this.setFortune(f);
-        }
-    }
-
-    async saveFortune(fortune) {
-        const today = new Date().toDateString();
-        try {
-            await window.creationStorage.plain.setItem(
-                'fortune_data',
-                btoa(JSON.stringify({ date: today, fortune }))
-            );
-        } catch (e) {
-            console.error('Storage error:', e);
+            this.setFortune(data.message.trim().toUpperCase());
         }
     }
 }
