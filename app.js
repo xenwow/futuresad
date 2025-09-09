@@ -214,7 +214,7 @@ class DystopianFortune {
             const storedData = await CreationStorageHandler.get('fortune_data');
             const data = storedData ? JSON.parse(storedData) : {};
             
-            if (data.date !== today) {
+            if (data.date == today) {
                 this.generateNewFortune();
             } else {
                 this.currentFortune = data.fortune;
