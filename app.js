@@ -237,10 +237,10 @@ class DystopianFortune {
     async saveFortune(fortune) {
         const today = new Date().toDateString();
         try {
-            await CreationStorageHandler.set('fortune_data', JSON.stringify({
+            await window.creationStorage.plain.setItem('fortune_data', btoa(JSON.stringify({
                 date: today,
                 fortune: fortune
-            }));
+            })));
         } catch (error) {
             console.error('Storage error:', error);
         }
