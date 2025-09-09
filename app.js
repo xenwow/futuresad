@@ -188,8 +188,9 @@ class DystopianFortune {
     generateNewFortune() {
         if (typeof PluginMessageHandler !== 'undefined') {
             const payload = {
-                message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. Respond in a short, haunting phrase (3–5 words). Avoid hope; make it bitter. Output ONLY the phrase, nothing else.",
+                message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. Respond in a short, haunting phrase (5-8 words). it should apply to todays society. Avoid hope; make it bitter. Output ONLY the phrase, nothing else.",
                 useLLM: true
+                wantsR1Response: false
             };
             PluginMessageHandler.postMessage(JSON.stringify(payload));
         } else {
