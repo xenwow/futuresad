@@ -54,7 +54,7 @@ class DystopianFortune {
         this.container = document.getElementById('fortune-container');
         this.typingSound = document.getElementById('typingSound');
         this.time = 0;
-        this.currentFortune = 'CALCULATING YOUR DESTINY...';
+        this.currentFortune = 'syncing with transistor chips...';
         this.isRendering = false;
         this.lastShake = 0;
 
