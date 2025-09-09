@@ -227,11 +227,43 @@ class DystopianFortune {
     }
 
     generateNewFortune() {
-        const payload = {
-            message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. respond in a short, haunting phrase. no more than 3-5 words. Blend themes of survival, weather extremes, memory, loss, and the unseen machinery, toll and culture of war. Avoid hopefulness; wisdom here is hard, bitter. DO NOT MENTION ANYTHING OTHER THAN THE QUOTE, DO NOT ADD QUOTES, NO NOT MENTION ANYTHING ELSE. JUST SAY THE WISDOM BY ITSELF",
-            useLLM: true
-        };
-        PluginMessageHandler.postMessage(JSON.stringify(payload));
+        if (typeof PluginMessageHandler !== 'undefined') {
+            const payload = {
+                message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. respond in a short, haunting phrase. no more than 3-5 words. Blend themes of survival, weather extremes, memory, loss, and the unseen machinery, toll and culture of war. Avoid hopefulness; wisdom here is hard, bitter. DO NOT MENTION ANYTHING OTHER THAN THE QUOTE, DO NOT ADD QUOTES, NO NOT MENTION ANYTHING ELSE. JUST SAY THE WISDOM BY ITSELF",
+                useLLM: true
+            };
+            PluginMessageHandler.postMessage(JSON.stringify(payload));
+        } else {
+            console.log('PluginMessageHandler not available');
+            // Fallback for browser mode
+            this.setFortune('SHADOWS CONSUME ALL');
+        }
+    }
+
+    handleMessage(data) {
+        console.log('Fortune handling message:', data);
+        
+        // Handle LLM response
+        if (data.data) {
+            try {
+                // Try to parse as JSON first
+                const parsedData = JSON.parse(data.data);
+                console.log('Parsed LLM data:', parsedData);
+                // Handle any JSON response here if needed
+            } catch (e) {
+                // Not JSON, treat as plain text fortune
+                console.log('Plain text fortune:', data.data);
+                const generatedFortune = data.data.trim().toUpperCase();
+                this.saveFortune(generatedFortune);
+                this.setFortune(generatedFortune);
+            }
+        } else if (data.message) {
+            // Fallback to message field
+            console.log('Fortune from message field:', data.message);
+            const generatedFortune = data.message.trim().toUpperCase();
+            this.saveFortune(generatedFortune);
+            this.setFortune(generatedFortune);
+        }
     }
 
     async saveFortune(fortune) {
