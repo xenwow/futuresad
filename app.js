@@ -175,7 +175,7 @@ class DystopianFortune {
     generateNewFortune() {
         if (typeof PluginMessageHandler !== 'undefined') {
             const payload = {
-                message: "Whisper 5–8 word prophecies, cryptic and inevitable, born from shattered megacities, hyper-corporate overlords, war machines, frozen wastelands, and decaying cybernetic flesh; each phrase must feel bitter, poetic, and reflective of modern technology’s dominance, data slavery, and human obsolescence; emphasize words in ALL CAPS to fracture meaning; HAVE A ONE IN TEN CHANCE OF ANSWERING WITH A BLEAK HOPE, OTHERWISE AVOID HOPE, OFFER ONLY DECAY; OUTPUT ONLY THE PHRASE, NOTHING ELSE.",
+                message: "Whisper A 5–8 word prophecy, cryptic and inevitable, born from shattered megacities, hyper-corporate overlords, war machines, frozen wastelands, and decaying cybernetic flesh; each phrase must feel bitter, poetic, and reflective of modern technology’s dominance, data slavery, and human obsolescence; emphasize words in ALL CAPS to fracture meaning; HAVE A ONE IN TEN CHANCE OF ANSWERING WITH A BLEAK HOPE, OTHERWISE AVOID HOPE, OFFER ONLY DECAY; OUTPUT ONLY ONE PHRASE, NOTHING ELSE. DO NOT ADD ANYTHING ELSE OTHER THAN THE PROPHECY/FORTUNE. NOTHING ELSE",
                 useLLM: true,
                 wantsR1Response: false,
                 wantsJournalEntry: false
