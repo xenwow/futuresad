@@ -30,20 +30,24 @@ function initializeHardwareListeners() {
 // Plugin message handler
 window.onPluginMessage = function(data) {
     console.log('Received plugin message:', data);
-    if (data.type === 'accelerometer') {
-        fortune.handleShake(data.data);
-    } else if (data.type === 'llmResponse') {
-        const generatedFortune = data.response.trim().toUpperCase();
-        fortune.saveFortune(generatedFortune);
-        fortune.setFortune(generatedFortune);
-    }
+    // Always forward to fortune’s handler
+    fortune.handleMessage(data);
 };
 
-function requestAccelerometer() {
-    PluginMessageHandler.postMessage(JSON.stringify({
-        message: "requestAccelerometer",
-        interval: 100
-    }));
+// Proper accelerometer setup using SDK
+async function requestAccelerometer() {
+    try {
+        const available = await window.creationSensors.accelerometer.isAvailable();
+        if (available) {
+            window.creationSensors.accelerometer.start((data) => {
+                fortune.handleShake(data);
+            }, { frequency: 60 });
+        } else {
+            console.log("Accelerometer not available");
+        }
+    } catch (err) {
+        console.error("Accelerometer error:", err);
+    }
 }
 
 class DystopianFortune {
@@ -211,8 +215,8 @@ class DystopianFortune {
         const today = new Date().toDateString();
         
         try {
-            const storedData = await CreationStorageHandler.get('fortune_data');
-            const data = storedData ? JSON.parse(storedData) : {};
+            const storedData = await window.creationStorage.plain.getItem('fortune_data');
+            const data = storedData ? JSON.parse(atob(storedData)) : {};
             
             if (data.date !== today) {
                 this.generateNewFortune();
@@ -247,9 +251,9 @@ class DystopianFortune {
         if (data.data) {
             try {
                 // Try to parse as JSON first
-                const parsedData = JSON.parse(data.data);
+                const parsedData = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
                 console.log('Parsed LLM data:', parsedData);
-                // Handle any JSON response here if needed
+                // If AI ever returns JSON, handle it here
             } catch (e) {
                 // Not JSON, treat as plain text fortune
                 console.log('Plain text fortune:', data.data);
@@ -269,10 +273,10 @@ class DystopianFortune {
     async saveFortune(fortune) {
         const today = new Date().toDateString();
         try {
-            await window.creationStorage.plain.setItem('fortune_data', btoa(JSON.stringify({
-                date: today,
-                fortune: fortune
-            })));
+            await window.creationStorage.plain.setItem(
+                'fortune_data',
+                btoa(JSON.stringify({ date: today, fortune }))
+            );
         } catch (error) {
             console.error('Storage error:', error);
         }
