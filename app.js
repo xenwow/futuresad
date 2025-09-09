@@ -227,20 +227,11 @@ class DystopianFortune {
     }
 
     generateNewFortune() {
-        if (typeof PluginMessageHandler !== 'undefined') {
-            const payload = {
-                message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. respond in a short, haunting phrase. no more than 3-5 words. Blend themes of survival, weather extremes, memory, loss, and the unseen machinery, toll and culture of war. Avoid hopefulness; wisdom here is hard, bitter. DO NOT MENTION ANYTHING OTHER THAN THE QUOTE, DO NOT ADD QUOTES, NO NOT MENTION ANYTHING ELSE. JUST SAY THE WISDOM BY ITSELF",
-                useLLM: true,
-                wantsR1Response: false,
-                wantsJournalEntry: false
-            };
-            
-            PluginMessageHandler.postMessage(JSON.stringify(payload));
-        } else {
-            // Fallback for browser mode
-            console.log('Plugin API not available - using fallback fortune');
-            this.setFortune('CIRCUITS REMEMBER STEEL');
-        }
+        const payload = {
+            message: "You are a decaying relic of artificial intelligence in a dystopian world — a landscape of endless war, corruption, death, shattered cities, and warring war machines. Your role is to whisper fragments of wisdom, prophecy, or fortune, as though I have discovered you deep in the ruins of a long lost facility. Each fortune should feel bleak, poetic tinged with inevitability. respond in a short, haunting phrase. no more than 3-5 words. Blend themes of survival, weather extremes, memory, loss, and the unseen machinery, toll and culture of war. Avoid hopefulness; wisdom here is hard, bitter. DO NOT MENTION ANYTHING OTHER THAN THE QUOTE, DO NOT ADD QUOTES, NO NOT MENTION ANYTHING ELSE. JUST SAY THE WISDOM BY ITSELF",
+            useLLM: true
+        };
+        PluginMessageHandler.postMessage(JSON.stringify(payload));
     }
 
     async saveFortune(fortune) {
