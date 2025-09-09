@@ -199,36 +199,61 @@ class DystopianFortune {
     }
 
     handleMessage(data) {
-        console.log('Fortune handling message:', data);
+    console.log('Fortune handling message:', data);
 
-        if (data.data) {
-            if (typeof data.data === 'string') {
-                try {
-                    const parsed = JSON.parse(data.data);
-                    console.log('Parsed JSON fortune:', parsed);
-                    if (parsed.fortune) {
-                        const f = parsed.fortune.trim().toUpperCase();
-                        this.saveFortune(f); this.setFortune(f);
-                        return;
-                    }
-                } catch (e) {
-                    // plain text string
-                    const f = data.data.trim().toUpperCase();
-                    this.saveFortune(f); this.setFortune(f);
-                    return;
-                }
-            } else if (data.data.fortune) {
-                const f = data.data.fortune.trim().toUpperCase();
-                this.saveFortune(f); this.setFortune(f);
+    // Check data.data field first (this is where LLM JSON responses come)
+    if (data.data) {
+        console.log('Found data.data:', data.data);
+        try {
+            // Handle if data.data is already an object or a string
+            const parsed = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
+            console.log('Parsed data:', parsed);
+            
+            // Look for common response formats
+            if (parsed.fortune) {
+                const f = parsed.fortune.trim().toUpperCase();
+                this.saveFortune(f);
+                this.setFortune(f);
                 return;
             }
-        }
-
-        if (data.message) {
-            const f = data.message.trim().toUpperCase();
-            this.saveFortune(f); this.setFortune(f);
+            
+            // If no fortune field, but it's a parsed object, use the whole response
+            const f = JSON.stringify(parsed).trim().toUpperCase();
+            this.saveFortune(f);
+            this.setFortune(f);
+            return;
+        } catch (e) {
+            console.error('Error parsing data.data:', e);
+            // data.data wasn't valid JSON, treat as plain text
+            const f = data.data.trim().toUpperCase();
+            this.saveFortune(f);
+            this.setFortune(f);
+            return;
         }
     }
+
+    // Also check message field (this is where plain text responses come)
+    if (data.message) {
+        console.log('Found data.message:', data.message);
+        
+        // Try to parse message as JSON first
+        try {
+            const parsed = JSON.parse(data.message);
+            if (parsed.fortune) {
+                const f = parsed.fortune.trim().toUpperCase();
+                this.saveFortune(f);
+                this.setFortune(f);
+                return;
+            }
+        } catch (e) {
+            // Not JSON, use as plain text
+        }
+        
+        const f = data.message.trim().toUpperCase();
+        this.saveFortune(f);
+        this.setFortune(f);
+    }
+
 
     async saveFortune(fortune) {
         const today = new Date().toDateString();
