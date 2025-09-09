@@ -1,11 +1,11 @@
 // Main application logic
 let fortune;
-const wantsR1Response: false
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
     fortune = new DystopianFortune();
     initializeHardwareListeners();
-    
+
     // Check if running as R1 plugin
     if (typeof PluginMessageHandler !== 'undefined') {
         console.log('Running as R1 Creation');
@@ -174,13 +174,15 @@ class DystopianFortune {
             const stored = await window.creationStorage.plain.getItem('fortune_data');
             const data = stored ? JSON.parse(atob(stored)) : {};
             if (data.date !== today) {
-                this.generateNewFortune();
+                this.setFortune('syncing with transistor chips...'); // show immediately
+                this.generateNewFortune(); // async LLM call
             } else {
                 this.currentFortune = data.fortune;
                 this.startTextRendering();
             }
         } catch (e) {
             console.error('Storage error:', e);
+            this.setFortune('syncing with transistor chips...');
             this.generateNewFortune();
         }
     }
@@ -189,8 +191,9 @@ class DystopianFortune {
         if (typeof PluginMessageHandler !== 'undefined') {
             const payload = {
                 message: "Whisper 5–8 word prophecies, cryptic and inevitable, born from shattered megacities, hyper-corporate overlords, war machines, frozen wastelands, and decaying cybernetic flesh; each phrase must feel bitter, poetic, and reflective of modern technology’s dominance, data slavery, and human obsolescence; emphasize words in ALL CAPS to fracture meaning; HAVE A ONE IN TEN CHANCE OF ANSWERING WITH A BLEAK HOPE, OTHERWISE AVOID HOPE, OFFER ONLY DECAY; OUTPUT ONLY THE PHRASE, NOTHING ELSE.",
-                useLLM: true
-                wantsR1Response: false
+                useLLM: true,
+                wantsR1Response: false,
+                wantsJournalEntry: false
             };
             PluginMessageHandler.postMessage(JSON.stringify(payload));
         } else {
@@ -206,14 +209,12 @@ class DystopianFortune {
             if (typeof data.data === 'string') {
                 try {
                     const parsed = JSON.parse(data.data);
-                    console.log('Parsed JSON fortune:', parsed);
                     if (parsed.fortune) {
                         const f = parsed.fortune.trim().toUpperCase();
                         this.saveFortune(f); this.setFortune(f);
                         return;
                     }
                 } catch (e) {
-                    // plain text string
                     const f = data.data.trim().toUpperCase();
                     this.saveFortune(f); this.setFortune(f);
                     return;
